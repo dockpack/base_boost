@@ -1,0 +1,38 @@
+---
+boost_version: 1.67.0
+zlib_version: 1.2.11
+bzip2_version: 1.0.6
+
+# Corporate feature: toggles desired state
+compilers_present: present
+
+# Software collections offer latest versions of programming languages
+collections_enabled: false
+
+# major release of software collections' devtoolset
+GCCVER: 7
+cplusplus_devtoolset: "devtoolset-{{ GCCVER }}"
+
+# boost_prefix used for zlib and bzip2 too
+boost_prefix: /usr/local
+boost_workdir: /usr/local/src
+
+boost_format: tar.gz
+boost_branch: release
+compile_boost: true
+clean_boost: true
+compile_boost_with:
+  --with-chrono
+  --with-context
+  --with-filesystem
+  --with-graph_parallel
+  --with-iostreams
+  --with-locale
+  --with-program_options
+  --with-regex
+  --with-serialization
+  --with-signals
+  --with-system
+  --with-thread
+  --with-timer
+  --with-wave

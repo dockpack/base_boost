@@ -1,0 +1,221 @@
+---
+
+- name: ensure directory exists
+  file:
+    path: /root
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+  tags:
+    - base_boost
+
+- name: copy goss tests template
+  template:
+    src: test_boost.yml.j2
+    dest: /root/test_boost.yml
+  tags:
+    - base_boost
+
+- name: source devtoolset enable file
+  when: collections_enabled and ansible_os_family == 'RedHat'
+  set_fact:
+    cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
+
+- name: what is my compiler?
+  shell: "{{ cmd_env | default('') }} gcc --version"
+  register: gcc_version
+  changed_when: false
+  tags:
+    - skip_ansible_lint
+
+- name: Display details about gcc version
+  debug:
+    msg: "{{ gcc_version.stdout_lines }}"
+
+- name: unarchive zlib source
+  unarchive:
+    src: "{{ zlib_url }}"
+    dest: "{{ boost_workdir }}"
+    creates: "{{ boost_workdir }}/zlib-{{ zlib_version }}"
+    copy: false
+  tags:
+    - base_boost
+    - boost
+
+- name: install zlib
+  shell: "{{ cmd_env | default('') }} CFLAGS=-fPIC ./configure --static && make && make install PREFIX={{ boost_prefix }}"
+  args:
+    chdir: "{{ boost_workdir }}/zlib-{{ zlib_version }}"
+    creates: "{{ boost_prefix }}/lib/libz.a"
+  register: zlib_result
+  tags:
+    - base_boost
+
+- name: Display details about the zlib installation
+  when: zlib_result is defined
+  debug:
+    msg: "{{ zlib_result.stdout_lines }}"
+
+- name: download bzip2 source
+  get_url:
+    url: "{{ bzip2_url }}"
+    dest: "/tmp/"
+    mode: 0755
+    validate_certs: false
+  register: download_bzip2
+  until: download_bzip2 is succeeded
+  retries: 3
+  tags:
+    - base_boost
+
+- name: unpack bzip2 source
+  unarchive:
+    src: "{{ download_bzip2.dest }}"
+    dest: "{{ boost_workdir }}"
+    creates: "{{ boost_workdir }}/bzip2-{{ bzip2_version }}"
+    copy: false
+  tags:
+    - base_boost
+
+- name: make install bzip2
+  shell: "{{ cmd_env | default('') }} make CFLAGS=-fPIC && make install"
+  args:
+    chdir: "{{ boost_workdir }}/bzip2-{{ bzip2_version }}"
+    creates: "{{ boost_prefix }}/lib/libbz2.a"
+  register: bzip2_result
+  tags:
+    - base_boost
+
+- name: Display details about the bzip2 installation
+  when: bzip2_result is defined
+  debug:
+    msg: "{{ bzip2_result.stdout_lines }}"
+
+- name: get details for Boost libraries
+  uri:
+    url: "{{ boost_url }}.json"
+    return_content: true
+  register: boost
+  ignore_errors: true
+  tags:
+    - base_boost
+    - boost
+
+- name: set facts for download
+  set_fact:
+    boost_json: "{{ boost.content }}"
+  when: boost.status == 200
+  tags:
+    - base_boost
+    - boost
+
+- name: yum install Boost libraries
+  when: ansible_os_family == 'RedHat' and boost.status != 200
+  yum:
+    name: boost-devel
+    state: "{{ compilers_present }}"
+  tags:
+    - base_boost
+    - boost
+
+- name: get sha256 for validation
+  set_fact:
+    sha256sum: "{{ boost_json.sha256 }}"
+  when: boost.status == 200
+  tags:
+    - base_boost
+    - boost
+
+- name: set filename
+  set_fact:
+    boost_file: "{{ boost_json.file }}"
+  when: boost.status == 200
+  tags:
+    - base_boost
+    - boost
+
+- name: download Boost sources
+  when: boost.status == 200
+  get_url:
+    url: "{{ boost_url }}"
+    dest: "/tmp/{{ boost_file }}"
+    sha256sum: "{{ sha256sum }}"
+    mode: 0755
+  register: download_boost
+  until: download_boost is succeeded
+  retries: 3
+  tags:
+    - base_boost
+    - boost
+
+- name: unpack Boost sources
+  unarchive:
+    src: "/tmp/{{ boost_file }}"
+    dest: "{{ boost_workdir }}"
+    creates: "{{ boost_workdir }}/{{ boost_dest }}"
+    copy: false
+  tags:
+    - base_boost
+    - boost
+
+- name: bootstrap Boost libraries
+  shell: "{{ cmd_env | default('') }} ./bootstrap.sh --without-libraries=python --without-icu --prefix={{ boost_prefix }}"
+  args:
+    chdir: "{{ boost_workdir }}/{{ boost_dest }}"
+    creates: "{{ boost_workdir }}/{{ boost_dest }}/project-config.jam"
+  register: boost_bootstrap
+  tags:
+    - base_boost
+    - boost
+    - skip_ansible_lint
+
+- name: Display details about the boost bootstrap
+  when: boost_bootstrap is defined and boost_bootstrap
+  debug:
+    msg: "{{ boost_bootstrap.stdout_lines }}"
+
+- name: clean Boost libraries
+  shell: "{{ cmd_env | default('') }} ./b2 --clean"
+  args:
+    chdir: "{{ boost_workdir }}/{{ boost_dest }}"
+  when: clean_boost is defined and clean_boost
+  register: boost_configuration
+  tags:
+    - base_boost
+    - boost
+    - skip_ansible_lint
+
+- name: Display details about the boost configuration
+  when: clean_boost is defined and clean_boost
+  debug:
+    msg: "{{ boost_configuration.stdout_lines }}"
+
+- name: compile Boost libraries
+  shell: "{{ cmd_env | default('') }} ./b2 -j 2 link=static runtime-link=static variant=release cxxflags=-fPIC \
+     -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
+     -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
+     {{ compile_boost_with }}"
+  args:
+    chdir: "{{ boost_workdir }}/{{ boost_dest }}"
+    creates: "{{ boost_workdir }}/{{ boost_dest }}/stage/lib/libboost_regex.a"
+  when: compile_boost is defined and compile_boost
+  tags:
+    - base_boost
+    - boost
+    - skip_ansible_lint
+
+- name: install Boost libraries
+  shell: "{{ cmd_env | default('') }} ./b2 -j 2 link=static runtime-link=static variant=release cxxflags=-fPIC \
+     -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
+     -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
+     {{ compile_boost_with }} \
+     install"
+  args:
+    chdir: "{{ boost_workdir }}/{{ boost_dest }}"
+    creates: "{{ boost_prefix }}/lib/libboost_regex.a"
+  when: compile_boost is defined and compile_boost
+  tags:
+    - base_boost
+    - boost
+    - skip_ansible_lint
