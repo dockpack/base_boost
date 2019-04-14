@@ -2,7 +2,7 @@
 - hosts: all
 
   roles:
-    - role: base_gcc
+    - role: dockpack.base_gcc
       development_groupinstall: false
       collections_enabled: true
     - role: base_boost
