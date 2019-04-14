@@ -1,6 +1,6 @@
 [![Galaxy](https://img.shields.io/badge/galaxy-dockpack.base__cplusplus-blue.svg?style=flat)](https://galaxy.ansible.com/dockpack/base_cplusplus)[![Build Status](https://api.travis-ci.org/dockpack/base_cplusplus.svg)](https://travis-ci.org/dockpack/base_cplusplus)
 
-base_cplusplus is an ansible-role that installs C++ compiler tools
+base_boost is an ansible-role that installs libraries for GNU C++ compiler tools
 
 Requirements
 ------------
@@ -18,10 +18,6 @@ Role Variables
 
 - approved/test release of software collections' devtoolset
 `cplusplus_devtoolset: devtoolset-7`
-
-- Change these defaults for optional packages.
-`cplusplusrpms`
-`cplusplusapts
 
 Most Boost libraries are header-only: they consist entirely of header files containing templates and inline functions, and require no separately-compiled library binaries or special treatment when linking. Yet this role does compile libraries, but you can override that behaviour if you like:
 
