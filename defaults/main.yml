@@ -10,8 +10,8 @@ compilers_present: present
 collections_enabled: false
 
 # major release of software collections' devtoolset
-GCCVER: 7
-cplusplus_devtoolset: "devtoolset-{{ GCCVER }}"
+DTSVER: 7
+cplusplus_devtoolset: "devtoolset-{{ DTSVER }}"
 
 # boost_prefix used for zlib and bzip2 too
 boost_prefix: /usr/local
