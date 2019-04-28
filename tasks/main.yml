@@ -17,13 +17,19 @@
   tags:
     - base_boost
 
+- name: display collections_enabled
+  debug:
+    msg: "collections_enabled: {{ collections_enabled }}"
+
 - name: source devtoolset enable file
-  when: collections_enabled and ansible_os_family == 'RedHat'
+  when: collections_enabled == 'true' and ansible_os_family == 'RedHat'
   set_fact:
     cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
 
 - name: what is my compiler?
-  shell: "{{ cmd_env | default('') }} gcc --version"
+  environment:
+    PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
+  shell: "{{ cmd_env | default('') }} gcc -v"
   register: gcc_version
   changed_when: false
   tags:
@@ -44,6 +50,8 @@
     - boost
 
 - name: install zlib
+  environment:
+    PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} CFLAGS=-fPIC ./configure --static && make && make install PREFIX={{ boost_prefix }}"
   args:
     chdir: "{{ boost_workdir }}/zlib-{{ zlib_version }}"
@@ -79,6 +87,8 @@
     - base_boost
 
 - name: make install bzip2
+  environment:
+    PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} make CFLAGS=-fPIC && make install"
   args:
     chdir: "{{ boost_workdir }}/bzip2-{{ bzip2_version }}"
@@ -160,6 +170,8 @@
     - boost
 
 - name: bootstrap Boost libraries
+  environment:
+    PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./bootstrap.sh --without-libraries=python --without-icu --prefix={{ boost_prefix }}"
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
@@ -176,6 +188,8 @@
     msg: "{{ boost_bootstrap.stdout_lines }}"
 
 - name: clean Boost libraries
+  environment:
+    PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 --clean"
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
@@ -192,6 +206,8 @@
     msg: "{{ boost_configuration.stdout_lines }}"
 
 - name: compile Boost libraries
+  environment:
+    PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 -j 2 link=static runtime-link=static variant=release cxxflags=-fPIC \
      -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
      -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
@@ -206,6 +222,8 @@
     - skip_ansible_lint
 
 - name: install Boost libraries
+  environment:
+    PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 -j 2 link=static runtime-link=static variant=release cxxflags=-fPIC \
      -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
      -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
