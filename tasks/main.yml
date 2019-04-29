@@ -21,8 +21,13 @@
   debug:
     msg: "collections_enabled: {{ collections_enabled }}"
 
+- name: do not source devtoolset enable file
+  when: not collections_enabled
+  set_fact:
+    cmd_env: ""
+
 - name: source devtoolset enable file
-  when: collections_enabled == 'true' and ansible_os_family == 'RedHat'
+  when: collections_enabled and ansible_os_family == 'RedHat'
   set_fact:
     cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
 
