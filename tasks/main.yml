@@ -200,7 +200,7 @@
   shell: "{{ cmd_env | default('') }} ./b2 --clean"
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
-  when: clean_boost is defined and clean_boost
+  when: clean_boost is defined and clean_boost and boost.status == 200
   register: boost_configuration
   tags:
     - base_boost
@@ -222,7 +222,7 @@
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
     creates: "{{ boost_workdir }}/{{ boost_dest }}/stage/lib/libboost_regex.a"
-  when: compile_boost is defined and compile_boost
+  when: compile_boost is defined and compile_boost and boost.status == 200
   tags:
     - base_boost
     - boost
@@ -239,7 +239,7 @@
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
     creates: "{{ boost_prefix }}/lib/libboost_regex.a"
-  when: compile_boost is defined and compile_boost
+  when: compile_boost is defined and compile_boost and boost.status == 200
   tags:
     - base_boost
     - boost
