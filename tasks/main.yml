@@ -215,7 +215,7 @@
 - name: compile Boost libraries
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} threading=multi link=static runtime-link=static variant=release cxxflags=-fPIC \
+  shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} link=static,shared threading=single,multi runtime-link=shared,static variant=release cxxflags=-fPIC \
      -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
      -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
      {{ compile_boost_with }}"
@@ -231,7 +231,7 @@
 - name: install Boost libraries
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} threading=multi link=static runtime-link=static variant=release cxxflags=-fPIC \
+  shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} link=static,shared threading=single,multi runtime-link=shared,static variant=release cxxflags=-fPIC \
      -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
      -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
      {{ compile_boost_with }} \
