@@ -165,6 +165,7 @@
     - boost
 
 - name: unpack Boost sources
+  when: boost.status == 200
   unarchive:
     src: "/tmp/{{ boost_file }}"
     dest: "{{ boost_workdir }}"
@@ -175,6 +176,7 @@
     - boost
 
 - name: bootstrap Boost libraries
+  when: boost.status == 200
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./bootstrap.sh --without-libraries=python --without-icu --prefix={{ boost_prefix }}"
@@ -188,7 +190,7 @@
     - skip_ansible_lint
 
 - name: Display details about the boost bootstrap
-  when: boost_bootstrap is defined and boost_bootstrap
+  when: boost_bootstrap is defined and boost_bootstrap and boost.status == 200
   debug:
     msg: "{{ boost_bootstrap.stdout_lines }}"
 
@@ -206,7 +208,7 @@
     - skip_ansible_lint
 
 - name: Display details about the boost configuration
-  when: clean_boost is defined and clean_boost
+  when: clean_boost is defined and clean_boost and boost.status == 200
   debug:
     msg: "{{ boost_configuration.stdout_lines }}"
 
