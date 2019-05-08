@@ -78,7 +78,8 @@
     validate_certs: false
   register: download_bzip2
   until: download_bzip2 is succeeded
-  retries: 3
+  retries: 10
+  delay: 2
   tags:
     - base_boost
 
@@ -163,7 +164,8 @@
     mode: 0755
   register: download_boost
   until: download_boost is succeeded
-  retries: 3
+  retries: 10
+  delay: 2
   tags:
     - base_boost
     - boost
