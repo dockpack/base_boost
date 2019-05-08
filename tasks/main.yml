@@ -130,6 +130,10 @@
   yum:
     name: boost-devel
     state: "{{ compilers_present }}"
+  register: network_access
+  until: network_access is success
+  retries: 10
+  delay: 2
   tags:
     - base_boost
     - boost
