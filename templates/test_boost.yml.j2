@@ -1,14 +1,4 @@
 file:
-  {{ boost_workdir }}/zlib-{{ zlib_version }}/compress.c:
-    exists: true
-  {{ boost_workdir }}/zlib-{{ zlib_version }}/zlib.h:
-    exists: true
-  {{ boost_prefix }}/lib/libz.a:
-    exists: true
-  {{ boost_workdir }}/bzip2-{{ bzip2_version }}/bzip2.c:
-    exists: true
-  {{ boost_prefix }}/lib/libbz2.a:
-    exists: true
 {% if compile_boost is defined and compile_boost %}
   {{ boost_prefix }}/lib/libboost_zlib.a:
     exists: true
@@ -16,4 +6,9 @@ file:
     exists: true
   {{ boost_workdir }}/boost_{{ boost_version | replace('.','_') }}:
     exists: true
+    filetype: directory
+  {{ boost_workdir }}/boost_{{ boost_version | replace('.','_') }}/b2:
+    exists: true
+    filetype: file
+    mode: 0755
 {% endif %}
