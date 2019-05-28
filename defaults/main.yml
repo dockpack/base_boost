@@ -19,6 +19,8 @@ boost_workdir: /usr/local/src
 
 boost_format: tar.gz
 boost_branch: release
+boost_properties: 'link=static threading=multi runtime-link=shared,static'
+boost_variant: release
 compile_boost: true
 clean_boost: true
 compile_boost_with:
