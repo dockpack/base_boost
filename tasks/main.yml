@@ -50,6 +50,10 @@
     dest: "{{ boost_workdir }}"
     creates: "{{ boost_workdir }}/zlib-{{ zlib_version }}"
     copy: false
+  register: download_zlib
+  until: download_zlib is succeeded
+  retries: 10
+  delay: 2
   tags:
     - base_boost
     - boost
