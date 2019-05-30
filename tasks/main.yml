@@ -116,8 +116,8 @@
   uri:
     url: "{{ boost_url }}.json"
     return_content: true
-  register: boost_meta
-  until: boost_meta is success
+  register: boost
+  until: boost is success
   retries: 3600
   delay: 5
   tags:
