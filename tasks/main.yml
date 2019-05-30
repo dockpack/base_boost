@@ -120,7 +120,6 @@
   until: boost_meta is success
   retries: 3600
   delay: 5
-  
   tags:
     - base_boost
     - boost
