@@ -1,4 +1,9 @@
 ---
+git:
+  depth: 50
+  submodules: false
+  lfs_skip_smudge: true
+
 sudo: required
 language: python
 services:
