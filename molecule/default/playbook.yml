@@ -10,8 +10,4 @@
       compile_boost: true
       clean_boost: false  # for idempotency
       compile_boost_with:
-        --with-filesystem
         --with-iostreams
-        --with-program_options
-        --with-regex
-        --with-system
