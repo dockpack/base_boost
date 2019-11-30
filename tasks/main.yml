@@ -82,8 +82,8 @@
     validate_certs: false
   register: download_bzip2
   until: download_bzip2 is succeeded
-  retries: 10
-  delay: 2
+  retries: 4
+  delay: 5
   tags:
     - base_boost
 
