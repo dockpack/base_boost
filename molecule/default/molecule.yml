@@ -15,7 +15,7 @@ platforms:
   - name: base-boost-centos6
     image: centos:6
     privileged: true
-  - name: base-gcc-ubuntu
+  - name: base-boost-ubuntu
     image: ubuntu:xenial
     privileged: true
 provisioner:
