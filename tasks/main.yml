@@ -31,7 +31,7 @@
   set_fact:
     cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
 
-- name: what is my compiler?
+- name: what is my gcc compiler?
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} gcc -v"
@@ -191,7 +191,7 @@
   when: boost.status == 200
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} ./bootstrap.sh --without-libraries=python --without-icu --prefix={{ boost_prefix }}"
+  shell: "{{ cmd_env | default('') }} ./bootstrap.sh --with-toolset={{ GCC_DIST|default('gcc') }} --without-libraries=python --without-icu --prefix={{ boost_prefix }}"
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
     creates: "{{ boost_workdir }}/{{ boost_dest }}/project-config.jam"
@@ -227,7 +227,9 @@
 - name: compile Boost libraries
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} {{ boost_properties }} variant={{ boost_variant }} cflags=-fPIC cxxflags=-fPIC \
+  shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} \
+     toolset={{ GCC_DIST|default('gcc') }}
+     {{ boost_properties }} variant={{ boost_variant }} cflags=-fPIC cxxflags=-fPIC \
      -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
      -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
      {{ compile_boost_with }}"
