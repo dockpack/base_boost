@@ -11,6 +11,9 @@ collections_enabled: false
 
 # major release of software collections' devtoolset
 DTSVER: 7
+#
+GCC_DIST: gcc
+
 cplusplus_devtoolset: "devtoolset-{{ DTSVER }}"
 
 # boost_prefix used for zlib and bzip2 too

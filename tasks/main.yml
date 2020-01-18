@@ -30,7 +30,7 @@
   when:
     - collections_enabled
     - ansible_os_family == 'RedHat'
-    - GCC_DIST == 'gcc'
+    - GCC_DIST != 'clang'
   set_fact:
     cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
 
