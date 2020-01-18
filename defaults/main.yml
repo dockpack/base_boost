@@ -12,7 +12,7 @@ collections_enabled: false
 # major release of software collections' devtoolset
 DTSVER: 7
 #
-GCC_DIST: gcc
+GCC_DIST: dts
 
 cplusplus_devtoolset: "devtoolset-{{ DTSVER }}"
 
