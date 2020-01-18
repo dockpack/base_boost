@@ -11,6 +11,7 @@ collections_enabled: false
 
 # major release of software collections' devtoolset
 DTSVER: 7
+GCC_DIST: dts
 #
 toolset: gcc
 
