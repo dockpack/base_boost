@@ -26,11 +26,23 @@
   set_fact:
     cmd_env: "true && "
 
+- name: set toolset
+  when:
+    - GCC_DIST != 'clang'
+  set_fact:
+    toolset: gcc
+
+- name: set toolset
+  when:
+    - GCC_DIST == 'clang'
+  set_fact:
+    toolset: clang
+
 - name: source devtoolset enable file
   when:
     - collections_enabled
     - ansible_os_family == 'RedHat'
-    - GCC_DIST != 'clang'
+    - toolset == 'gcc'
   set_fact:
     cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
 

@@ -11,8 +11,9 @@ collections_enabled: false
 
 # major release of software collections' devtoolset
 DTSVER: 7
+GCC_DIST: dts
 #
-GCC_DIST: gcc
+toolset: gcc
 
 cplusplus_devtoolset: "devtoolset-{{ DTSVER }}"
 llvm_toolset: 'llvm-toolset-7.0'
