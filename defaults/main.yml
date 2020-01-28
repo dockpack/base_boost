@@ -15,6 +15,7 @@ DTSVER: 7
 GCC_DIST: gcc
 
 cplusplus_devtoolset: "devtoolset-{{ DTSVER }}"
+llvm_toolset: 'llvm-toolset-7.0'
 
 # boost_prefix used for zlib and bzip2 too
 boost_prefix: /usr/local
