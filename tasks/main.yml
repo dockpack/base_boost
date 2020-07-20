@@ -309,3 +309,8 @@
     - base_boost
     - boost
     - skip_ansible_lint
+
+- name: cleanup of build artefacts
+  file:
+    path: "{{ boost_workdir }}/{{ boost_dest }}"
+    state: absent
