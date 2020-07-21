@@ -86,7 +86,7 @@
 - name: install zlib
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} CFLAGS=-fPIC ./configure --static && make && make install PREFIX={{ boost_prefix }}"
+  shell: "{{ cmd_env | default('') }} CFLAGS='{{ boost_cflags }}' ./configure --static && make && make install PREFIX={{ boost_prefix }}"
   args:
     chdir: "{{ boost_workdir }}/zlib-{{ zlib_version }}"
     creates: "{{ boost_prefix }}/lib/libz.a"
@@ -124,7 +124,7 @@
 - name: make install bzip2
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} make CFLAGS=-fPIC && make install"
+  shell: "{{ cmd_env | default('') }} make CFLAGS='{{ boost_cflags }}' && make install"
   args:
     chdir: "{{ boost_workdir }}/bzip2-{{ bzip2_version }}"
     creates: "{{ boost_prefix }}/lib/libbz2.a"
@@ -254,7 +254,7 @@
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} \
      toolset=gcc
-     {{ boost_properties }} variant={{ boost_variant }} cflags=-fPIC cxxflags=-fPIC \
+     {{ boost_properties }} variant={{ boost_variant }} cflags='{{ boost_cflags }}' cxxflags='{{ boost_cxxflags }}' \
      -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
      -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
      {{ compile_boost_with }}"
@@ -276,7 +276,7 @@
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} \
      toolset=clang
-     {{ boost_properties }} variant={{ boost_variant }} cflags=-fPIC cxxflags=-fPIC \
+     {{ boost_properties }} variant={{ boost_variant }} cflags='{{ boost_cflags }}' cxxflags='{{ boost_cxxflags }}' \
      -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
      -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
      {{ compile_boost_with }}"
@@ -296,7 +296,7 @@
 - name: install Boost libraries
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} {{ boost_properties }} variant={{ boost_variant }} cflags=-fPIC cxxflags=-fPIC \
+  shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} {{ boost_properties }} variant={{ boost_variant }} cflags='{{ boost_cflags }}' cxxflags='{{ boost_cxxflags }}' \
      -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
      -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
      {{ compile_boost_with }} \
