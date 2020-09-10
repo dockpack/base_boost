@@ -1,6 +1,6 @@
 {
   "name": "dockpack.base_boost",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "scripts": {
     "release": "release-it"
   },
