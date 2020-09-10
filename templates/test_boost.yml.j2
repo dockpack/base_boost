@@ -4,10 +4,4 @@ file:
     exists: true
   {{ boost_prefix }}/lib/libboost_bzip2.a:
     exists: true
-  {{ boost_workdir }}/boost_{{ boost_version | replace('.','_') }}:
-    exists: true
-    filetype: directory
-  {{ boost_workdir }}/boost_{{ boost_version | replace('.','_') }}/b2:
-    exists: true
-    filetype: file
 {% endif %}
