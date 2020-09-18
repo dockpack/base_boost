@@ -191,7 +191,7 @@
   get_url:
     url: "{{ boost_url }}"
     dest: "/tmp/{{ boost_file }}"
-    sha256sum: "{{ sha256sum }}"
+    checksum: "sha256:{{ sha256sum }}"
     mode: 0755
   register: download_boost
   until: download_boost is succeeded
