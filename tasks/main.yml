@@ -296,6 +296,7 @@
 - name: install Boost libraries
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
+  # yamllint disable-line rule:line-length
   shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} {{ boost_properties }} variant={{ boost_variant }} cflags='{{ boost_cflags }}' cxxflags='{{ boost_cxxflags }}' \
      -sZLIB_SOURCE={{ boost_workdir }}/zlib-{{ zlib_version }} \
      -sBZIP2_SOURCE={{ boost_workdir }}/bzip2-{{ bzip2_version }} \
