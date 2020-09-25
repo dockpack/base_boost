@@ -18,6 +18,7 @@
   template:
     src: test_boost.yml.j2
     dest: /root/test_boost.yml
+    mode: 0644
   tags:
     - base_boost
 
@@ -75,6 +76,7 @@
     dest: "{{ boost_workdir }}"
     creates: "{{ boost_workdir }}/zlib-{{ zlib_version }}"
     copy: false
+    mode: 0755
   register: download_zlib
   until: download_zlib is succeeded
   retries: 10
@@ -118,6 +120,7 @@
     dest: "{{ boost_workdir }}"
     creates: "{{ boost_workdir }}/bzip2-{{ bzip2_version }}"
     copy: false
+    mode: 0755
   tags:
     - base_boost
 
@@ -208,6 +211,7 @@
     dest: "{{ boost_workdir }}"
     creates: "{{ boost_workdir }}/{{ boost_dest }}"
     copy: false
+    mode: 0755
   tags:
     - base_boost
     - boost
