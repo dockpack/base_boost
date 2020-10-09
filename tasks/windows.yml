@@ -43,6 +43,8 @@
     delete_archive: true
     creates: "{{ boost_prefix }}/zlib-{{ zlib_version }}/contrib"
     copy: false
+  vars:
+    ansible_command_timeout: 900
   tags:
     - zlib
 
