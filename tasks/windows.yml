@@ -1,0 +1,223 @@
+---
+
+- name: Configure my toolset
+  set_fact:
+    my_toolset: "{{ toolset }}"
+  tags:
+    - boost
+    - b2
+
+- name: Just install 7zip instead of Pscx to deal with tar.gz
+  win_chocolatey:
+    name: 7zip.install
+    state: present
+  register: install_7zip
+  until: install_7zip is succeeded
+  retries: 10
+  delay: 2
+
+- name: Create work directories
+  win_file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ boost_prefix }}"
+    - "{{ boost_workdir }}"
+  when: compile_boost|bool
+
+- name: download zlib source
+  win_get_url:
+    url: "{{ zlib_url }}"
+    dest: "{{ boost_workdir }}"
+  register: download_zlib
+  until: download_zlib is succeeded
+  retries: 10
+  delay: 2
+  tags:
+    - zlib
+
+- name: unzip zlib source
+  win_unzip:
+    src: "{{ download_zlib.dest }}"
+    dest: "{{ boost_prefix }}"
+    delete_archive: true
+    creates: "{{ boost_prefix }}/zlib-{{ zlib_version }}/contrib"
+    copy: false
+  tags:
+    - zlib
+
+- name: download bzip2 source
+  win_get_url:
+    url: "{{ bzip2_url }}"
+    dest: "{{ boost_workdir }}"
+    validate_certs: false
+  register: download_bzip2
+  until: download_bzip2 is succeeded
+  retries: 10
+  delay: 2
+  tags:
+    - bzip2
+
+- name: gunzip bzip2 source
+  win_shell: '7z x -y "{{ download_bzip2.dest }}" -o"{{ boost_workdir }}"'
+  args:
+    creates: "{{ boost_prefix }}/bzip2-{{ bzip2_version }}.tar"
+    chdir: "{{ boost_workdir }}"
+  tags:
+    - bzip2
+
+- name: untar bzip2 source
+  # yamllint disable-line rule:line-length
+  win_shell: '7z x -aoa -ttar -r -o"{{ boost_prefix }}" "{{ boost_workdir }}/bzip2-{{ bzip2_version }}.tar"'
+
+- name: cleanup temporary files
+  win_file:
+    path: "{{ boost_prefix }}/{{ item }}"
+    state: absent
+  with_items:
+    - sample1.tar
+    - sample2.tar
+    - sample3.tar
+  tags:
+    - zlib
+    - bzip2
+
+- name: get boost download url
+  when: compile_boost|bool
+  win_uri:
+    url: "{{ boost_url }}"
+    follow_redirects: none
+    status_code: 302
+  register: uri_output
+  tags:
+    - boost
+    - download_boost
+
+- name: download boost source
+  when: compile_boost|bool
+  win_get_url:
+    url: "{{ uri_output.location }}"
+    dest: "{{ boost_workdir }}/{{ boost_dest }}.zip"
+  register: download_boost
+  until: download_boost is succeeded
+  retries: 10
+  delay: 2
+  tags:
+    - boost
+    - download_boost
+
+- name: unpack boost source
+  win_unzip:
+    src: "{{ download_boost.dest }}"
+    dest: "{{ boost_prefix }}"
+    delete_archive: true
+    creates: "{{ boost_dir }}"
+    copy: false
+  async: 600
+  poll: 60
+  tags:
+    - boost
+    - download_boost
+
+- name: verify install
+  win_stat:
+    path: "{{ boost_install_dir }}/libs"
+  when: not compile_boost|bool
+  register: boost_librarydir
+  tags:
+    - boost
+
+- name: create install directory
+  win_file:
+    path: "{{ boost_install_dir }}"
+    state: directory
+  when: not compile_boost|bool and not boost_librarydir.stat.exists
+  tags:
+    - boost
+
+- name: get boost binary
+  win_get_url:
+    url: "{{ boost_bin }}"
+    dest: "{{ boost_workdir }}/{{ boost_file_name_exe }}"
+  when: not compile_boost|bool
+  tags:
+    - boost
+
+- name: install boost
+  # yamllint disable-line rule:line-length
+  win_shell: "cmd.exe /c {{ boost_file_name_exe }} /DIR='{{ boost_install_dir }}' /SILENT /NOCANCEL"
+  args:
+    chdir: "{{ boost_workdir }}"
+  when: not compile_boost|bool
+  tags:
+    - boost
+
+- name: bootstrap boost
+  win_shell: "cmd.exe /c bootstrap"
+  args:
+    chdir: "{{ boost_dir }}"
+    creates: "{{ boost_dir }}/project-config.jam"
+  when: compile_boost|bool
+  tags:
+    - bootstrap
+    - boost
+
+- name: clean b2 for boost
+  win_shell: "cmd.exe /c b2 --clean"
+  args:
+    chdir: "{{ boost_dir }}"
+  when: compile_boost|bool and clean_boost|bool
+  tags:
+    - b2
+    - boost
+
+- name: run b2 for boost compilation
+  win_shell: "cmd.exe /c b2 {{ compile_boost_with }}
+      --build-type=minimal -j{{ ansible_processor_vcpus|default('2') }}
+      toolset={{ my_toolset }}
+      address-model={{ item.address_model }}
+      architecture={{ item.architecture }}
+      link={{ item.link }}
+      threading={{ item.threading }}
+      runtime-link={{ item.runtime_link }}
+      cflags={{ boost_cflags }}
+      cxxflags={{ boost_cxxflags }}
+      stage --stagedir=stage/lib{{ item.address_model }}-{{ my_toolset }}
+      -sBZIP2_SOURCE='{{ boost_prefix }}/bzip2-{{ bzip2_version }}'
+      -sZLIB_SOURCE='{{ boost_prefix }}/zlib-{{ zlib_version }}'"
+  async: 300
+  poll: 60
+  args:
+    chdir: "{{ boost_dir }}"
+    creates: "stage/lib{{ item.address_model }}-{{ my_toolset }}"
+  with_items:
+    - "{{ boost_set }}"
+  when: compile_boost|bool
+  tags:
+    - b2
+    - boost
+
+- name: add boost root to system environment
+  win_environment:
+    name: BOOST_ROOT
+    value: "{{ boost_install_dir }}"
+    level: machine
+    state: present
+  when: not compile_boost|bool
+  tags:
+    - boost
+
+- name: Add boost library directory to system environment
+  win_environment:
+    name: BOOST_LIBRARYDIR
+    value: "{{ boost_install_dir }}/libs"
+    level: machine
+    state: present
+  when: not compile_boost|bool
+  tags:
+    - boost
+
+- name: Cleanup
+  win_file:
+    path: "{{ boost_workdir }}"
+    state: absent
