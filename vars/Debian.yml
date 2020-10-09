@@ -9,7 +9,7 @@ boost_format: tar.gz
 boost_url: "{{ boost_baseurl }}/{{ boost_version }}/source/{{ boost_dest }}.{{ boost_format }}"
 
 bzip2_url: "https://www.sourceware.org/pub/bzip2/bzip2-{{ bzip2_version }}.tar.gz"
-
+toolset: gcc
 zlib_lib: "zlib-{{ zlib_version }}"
 zlib_archive: "{{ zlib_lib }}.tar.gz"
 zlib_url: "http://zlib.net/{{ zlib_archive }}"
