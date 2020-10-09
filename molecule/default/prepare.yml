@@ -1,0 +1,7 @@
+---
+- hosts: all
+
+  roles:
+    - role: dockpack.base_gcc
+      development_groupinstall: false
+      collections_enabled: true
