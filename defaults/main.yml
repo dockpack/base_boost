@@ -6,23 +6,6 @@ bzip2_version: 1.0.6
 # Corporate feature: toggles desired state
 compilers_present: present
 
-# Software collections offer latest versions of programming languages
-collections_enabled: false
-
-# major release of software collections' devtoolset
-DTSVER: 7
-#
-toolset: gcc
-
-cplusplus_devtoolset: "devtoolset-{{ DTSVER }}"
-llvm_toolset: 'llvm-toolset-7.0'
-
-# boost_prefix used for zlib and bzip2 too
-boost_prefix: /usr/local
-boost_workdir: /usr/local/src
-boost_cflags: '-fPIC'
-boost_cxxflags: '-fPIC'
-boost_format: tar.gz
 boost_branch: release
 boost_properties: ''
 boost_variant: release

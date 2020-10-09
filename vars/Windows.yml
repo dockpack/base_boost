@@ -1,0 +1,36 @@
+---
+boost_prefix: 'C:/Local'
+boost_workdir: 'C:/tmp/boost'
+boost_dir: "{{ boost_prefix }}/boost_{{ boost_version.replace('.', '_')  }}"
+boost_file_name: "boost_{{ boost_version.replace('.', '_') }}-msvc-14.1-64"
+boost_install_dir: "C:/boost/{{ boost_file_name }}"
+boost_file_name_exe: "{{ boost_file_name }}.exe"
+
+boost_format: zip
+
+boost_cflags: '/GR-'
+boost_cxxflags: '/GR-'
+
+boost_set:
+  - address_model: 64
+    architecture: x86
+    link: static
+    runtime_link: shared
+    threading: multi
+  - address_model: 32
+    architecture: x86
+    link: static
+    runtime_link: shared
+    threading: multi
+
+boost_bin: "{{ boost_site }}/{{ boost_version }}/binaries/{{ boost_file_name_exe }}"
+# yamllint disable-line rule:line-length
+boost_url: "{{ boost_baseurl }}/{{ boost_version }}/source/{{ boost_dest }}.{{ boost_format }}"
+
+bzip2_site: "https://www.sourceware.org/pub/bzip2"
+bzip2_file: "bzip2-{{ bzip2_version }}.tar.gz"
+bzip2_url: "{{ bzip2_site }}/{{ bzip2_file }}"
+
+zlib_lib: "zlib{{ zlib_version.replace('.', '')  }}"
+zlib_archive: "{{ zlib_lib }}.zip"
+zlib_url: "http://zlib.net/{{ zlib_archive }}"
