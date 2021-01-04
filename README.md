@@ -5,7 +5,7 @@ base_boost is an ansible-role that installs libraries for GNU C++ compiler tools
 Requirements
 ------------
 
-RHEL-like system, or Ubuntu
+RHEL-like system, or Ubuntu, or Windows.
 
 
 Role Variables
