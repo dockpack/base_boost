@@ -12,9 +12,6 @@ platforms:
   - name: base-boost-centos7
     image: centos:7
     privileged: true
-  - name: base-boost-ubuntu
-    image: ubuntu:xenial
-    privileged: true
 provisioner:
   name: ansible
 verifier:
