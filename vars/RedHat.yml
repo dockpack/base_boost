@@ -1,5 +1,5 @@
 ---
-
+# yamllint disable rule:line-length
 # boost_prefix used for zlib and bzip2 too
 boost_prefix: /usr/local
 boost_workdir: /usr/local/src

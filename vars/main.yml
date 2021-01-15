@@ -1,3 +1,4 @@
 ---
+# yamllint disable rule:line-length
 boost_baseurl: "https://dl.bintray.com/boostorg/{{ boost_branch }}"
 boost_dest: "boost_{{ boost_version| replace('.','_') }}"

@@ -1,4 +1,5 @@
 ---
+# yamllint disable rule:line-length
 # boost_prefix used for zlib and bzip2 too
 boost_prefix: /usr/local
 boost_workdir: /usr/local/src
@@ -6,6 +7,7 @@ boost_workdir: /usr/local/src
 boost_cflags: '-fPIC'
 boost_cxxflags: '-fPIC'
 boost_format: tar.gz
+# yamlint disable rule:line-length
 boost_url: "{{ boost_baseurl }}/{{ boost_version }}/source/{{ boost_dest }}.{{ boost_format }}"
 
 bzip2_url: "https://www.sourceware.org/pub/bzip2/bzip2-{{ bzip2_version }}.tar.gz"

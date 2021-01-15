@@ -1,4 +1,5 @@
 ---
+# yamllint disable rule:line-length
 boost_prefix: 'C:/Local'
 boost_workdir: 'C:/tmp/boost'
 boost_dir: "{{ boost_prefix }}/boost_{{ boost_version.replace('.', '_')  }}"
