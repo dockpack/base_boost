@@ -74,6 +74,10 @@
   debug:
     msg: "{{ gcc_version.stdout_lines }}"
 
+- name: display zlib_url
+  debug:
+    msg: "zlib_url: {{ zlib_url }}"
+
 - name: unarchive zlib source
   unarchive:
     src: "{{ zlib_url }}"
@@ -104,6 +108,10 @@
   when: zlib_result is defined
   debug:
     msg: "{{ zlib_result.stdout_lines }}"
+
+- name: display bzib2_url
+  debug:
+    msg: "bzip2_url: {{ bzip2_url }}"
 
 - name: download bzip2 source
   get_url:
@@ -268,7 +276,7 @@
      {{ compile_boost_with }}"
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
-    creates: "{{ boost_workdir }}/{{ boost_dest }}/stage/lib/libboost_regex.a"
+    creates: "{{ boost_workdir }}/{{ boost_dest }}/stage/lib/libboost_bzip2.a"
   when:
     - compile_boost is defined
     - compile_boost|bool
@@ -290,7 +298,7 @@
      {{ compile_boost_with }}"
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
-    creates: "{{ boost_workdir }}/{{ boost_dest }}/stage/lib/libboost_regex.a"
+    creates: "{{ boost_workdir }}/{{ boost_dest }}/stage/lib/libboost_bzip2.a"
   when:
     - compile_boost is defined
     - compile_boost|bool
@@ -315,7 +323,7 @@
      install"
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
-    creates: "{{ boost_prefix }}/lib/libboost_regex.a"
+    creates: "{{ boost_prefix }}/lib/libboost_bzip2.a"
   when: compile_boost is defined and compile_boost and boost.status == 200
   tags:
     - base_boost
@@ -326,3 +334,5 @@
   file:
     path: "{{ boost_workdir }}/{{ boost_dest }}"
     state: absent
+  tags:
+    - notest
