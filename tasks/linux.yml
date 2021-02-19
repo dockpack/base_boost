@@ -26,6 +26,13 @@
   tags:
     - base_boost
 
+- name: Disable software collections on RedHat 8
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int > 7
+  set_fact:
+    collections_enabled: false
+
 - name: display collections_enabled
   debug:
     msg: "collections_enabled: {{ collections_enabled }}"
@@ -37,8 +44,9 @@
 
 - name: source devtoolset enable file
   when:
-    - collections_enabled
+    - collections_enabled|bool
     - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int < 8
     - toolset == 'gcc'
   set_fact:
     cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
