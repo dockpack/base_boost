@@ -1,0 +1,3 @@
+---
+- src: https://github.com/dockpack/base_clang.git
+  name: base_clang
