@@ -4,6 +4,29 @@
   include_vars: "{{ ansible_os_family }}.yml"
   tags: always
 
+- name: install dependencies
+  yum:
+    state: present
+    name:
+      - make
+      - unzip
+
+- name: set toolset
+  when:
+    - toolset == 'clang'
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int == 7
+  set_fact:
+    llvm_toolset: 'llvm-toolset-7.0'
+
+- name: set toolset
+  when:
+    - toolset == 'clang'
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int > 7
+  set_fact:
+    llvm_toolset: 'llvm-toolset'
+
 - name: display toolset
   debug:
     msg: "toolset (gcc or clang): {{ toolset }}"
@@ -37,10 +60,9 @@
   debug:
     msg: "collections_enabled: {{ collections_enabled }}"
 
-- name: do not source devtoolset enable file
-  when: not collections_enabled
+- name: when not sourcing devtoolset enable file
   set_fact:
-    cmd_env: "true && "
+    cmd_env: "/bin/true && "
 
 - name: source devtoolset enable file
   when:
@@ -55,32 +77,40 @@
   when:
     - collections_enabled
     - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int < 8
     - toolset == 'clang'
   set_fact:
     cmd_env: "source /opt/rh/{{ llvm_toolset }}/enable && "
 
 - name: what is my gcc compiler?
+  when: toolset == 'gcc'
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} gcc -v"
+  shell: "{{ cmd_env | default('/bin/true') }} gcc -v"
   register: gcc_version
   changed_when: false
   tags:
     - skip_ansible_lint
 
+- name: Display details about gcc version
+  when: toolset == 'gcc'
+  debug:
+    msg: "{{ gcc_version.stdout_lines }}"
+
 - name: what is my clang compiler?
   when: toolset == 'clang'
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} clang -v"
+  shell: "{{ cmd_env | default('/bin/true') }} clang -v"
   register: clang_version
   changed_when: false
   tags:
     - skip_ansible_lint
 
-- name: Display details about gcc version
+- name: Display details about clang version
+  when: toolset == 'clang'
   debug:
-    msg: "{{ gcc_version.stdout_lines }}"
+    msg: "{{ clang_version.stdout_lines }}"
 
 - name: display zlib_url
   debug:
