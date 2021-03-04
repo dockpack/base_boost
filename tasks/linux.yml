@@ -134,7 +134,13 @@
 - name: install zlib
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('/bin/true') }} CC={{ toolset }} CFLAGS='{{ boost_cflags }}' ./configure --static && make && make install PREFIX={{ boost_prefix }}"
+  shell: |
+    {{ cmd_env | default('/bin/true') }} \
+    CC={{ toolset }} \
+    CFLAGS='{{ boost_cflags }}' \
+    ./configure --static \
+    && make \
+    && make install PREFIX={{ boost_prefix }}
   args:
     chdir: "{{ boost_workdir }}/zlib-{{ zlib_version }}"
     creates: "{{ boost_prefix }}/lib/libz.a"
