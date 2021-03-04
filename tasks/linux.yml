@@ -9,7 +9,7 @@
     state: present
     name:
       - make
-      - unzip
+      - diffutils
 
 - name: set toolset
   when:
@@ -101,7 +101,7 @@
   when: toolset == 'clang'
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('/bin/true') }} clang -v"
+  shell: "{{ cmd_env | default('/bin/true') }} clang --version"
   register: clang_version
   changed_when: false
   tags:
@@ -134,7 +134,7 @@
 - name: install zlib
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} CFLAGS='{{ boost_cflags }}' ./configure --static && make && make install PREFIX={{ boost_prefix }}"
+  shell: "{{ cmd_env | default('/bin/true') }} CC={{ toolset }} CFLAGS='{{ boost_cflags }}' ./configure --static && make && make install PREFIX={{ boost_prefix }}"
   args:
     chdir: "{{ boost_workdir }}/zlib-{{ zlib_version }}"
     creates: "{{ boost_prefix }}/lib/libz.a"
@@ -177,7 +177,7 @@
 - name: make install bzip2
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
-  shell: "{{ cmd_env | default('') }} make CFLAGS='{{ boost_cflags }}' && make install"
+  shell: "{{ cmd_env | default('') }} make CC={{ toolset }} CFLAGS='{{ boost_cflags }}' && make install"
   args:
     chdir: "{{ boost_workdir }}/bzip2-{{ bzip2_version }}"
     creates: "{{ boost_prefix }}/lib/libbz2.a"
