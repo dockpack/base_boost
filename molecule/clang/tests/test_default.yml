@@ -1,0 +1,17 @@
+---
+# Molecule managed
+file:
+  /usr/local/lib/libz.a:
+    exists: true
+  /usr/local/lib/libbz2.a:
+    exists: true
+  /usr/local/lib/libboost_zlib.a:
+    exists: true
+  /usr/local/lib/libboost_bzip2.a:
+    exists: true
+  /usr/local/src/bzip2-1.0.6/bzip2.c:
+    exists: true
+  /usr/local/src/zlib-1.2.11/compress.c:
+    exists: true
+  /usr/local/src/zlib-1.2.11/zlib.h:
+    exists: true

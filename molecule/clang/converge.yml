@@ -1,0 +1,11 @@
+---
+- hosts: all
+
+  roles:
+    - role: base_boost
+      collections_enabled: true
+      compile_boost: true
+      toolset: clang
+      clean_boost: false  # for idempotency
+      compile_boost_with:
+        --with-iostreams
