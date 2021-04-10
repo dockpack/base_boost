@@ -21,7 +21,6 @@ compile_boost_with:
   --with-program_options
   --with-regex
   --with-serialization
-  --with-signals
   --with-system
   --with-thread
   --with-timer
