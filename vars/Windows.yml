@@ -9,8 +9,8 @@ boost_file_name_exe: "{{ boost_file_name }}.exe"
 
 boost_format: zip
 
-boost_cflags: '/GR-'
-boost_cxxflags: '/GR-'
+boost_cflags: '/GR'
+boost_cxxflags: '/GR'
 
 boost_set:
   - address_model: 64
