@@ -1,6 +1,8 @@
 ---
 
 galaxy_info:
+  role_name: base_boost
+  namespace: dockpack
   author: bbaassssiiee
   description: Boost libraries for C++
   company:
