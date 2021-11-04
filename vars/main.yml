@@ -1,4 +1,5 @@
 ---
 # yamllint disable rule:line-length
 boost_baseurl: "https://boostorg.jfrog.io/artifactory/main/{{ boost_branch }}"
-boost_dest: "boost_{{ boost_version| replace('.','_') }}"
+boost_dest: "boost_{{ boost_version | replace('.','_') }}"
+...

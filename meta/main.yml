@@ -1,5 +1,5 @@
 ---
-
+# Standards: 0.2
 galaxy_info:
   role_name: base_boost
   namespace: dockpack
@@ -23,3 +23,4 @@ galaxy_info:
     - gcc
 
 dependencies: []
+...
