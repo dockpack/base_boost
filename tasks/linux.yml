@@ -4,14 +4,14 @@
   include_vars: "{{ ansible_os_family }}.yml"
   tags: always
 
-- name: install dependencies
+- name: Install dependencies
   yum:
     state: present
     name:
       - make
       - diffutils
 
-- name: set toolset
+- name: Set llvm_toolset to llvm-toolset-7.0
   when:
     - toolset == 'clang'
     - ansible_os_family == 'RedHat'
@@ -19,7 +19,7 @@
   set_fact:
     llvm_toolset: 'llvm-toolset-7.0'
 
-- name: set toolset
+- name: Set llvm_toolset to llvm-toolset
   when:
     - toolset == 'clang'
     - ansible_os_family == 'RedHat'
@@ -27,11 +27,11 @@
   set_fact:
     llvm_toolset: 'llvm-toolset'
 
-- name: display toolset
+- name: Display toolset
   debug:
     msg: "toolset (gcc or clang): {{ toolset }}"
 
-- name: ensure directory exists
+- name: Ensure directory exists
   file:
     path: /root
     state: directory
@@ -41,7 +41,7 @@
   tags:
     - base_boost
 
-- name: copy goss tests template
+- name: Copy goss tests template
   template:
     src: test_boost.yml.j2
     dest: /root/test_boost.yml
@@ -56,15 +56,15 @@
   set_fact:
     collections_enabled: false
 
-- name: display collections_enabled
+- name: Display collections_enabled
   debug:
     msg: "collections_enabled: {{ collections_enabled }}"
 
-- name: when not sourcing devtoolset enable file
+- name: When not sourcing devtoolset enable file
   set_fact:
     cmd_env: "/bin/true && "
 
-- name: source devtoolset enable file
+- name: Source devtoolset enable file
   when:
     - collections_enabled|bool
     - ansible_os_family == 'RedHat'
@@ -73,7 +73,7 @@
   set_fact:
     cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
 
-- name: source llvm toolset enable file
+- name: Source llvm toolset enable file
   when:
     - collections_enabled
     - ansible_os_family == 'RedHat'
@@ -82,7 +82,7 @@
   set_fact:
     cmd_env: "source /opt/rh/{{ llvm_toolset }}/enable && "
 
-- name: what is my gcc compiler?
+- name: What is my gcc compiler?
   when: toolset == 'gcc'
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
@@ -97,7 +97,7 @@
   debug:
     msg: "{{ gcc_version.stdout_lines }}"
 
-- name: what is my clang compiler?
+- name: What is my clang compiler?
   when: toolset == 'clang'
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
@@ -112,11 +112,11 @@
   debug:
     msg: "{{ clang_version.stdout_lines }}"
 
-- name: display zlib_url
+- name: Display zlib_url
   debug:
     msg: "zlib_url: {{ zlib_url }}"
 
-- name: unarchive zlib source
+- name: Unarchive zlib source
   unarchive:
     src: "{{ zlib_url }}"
     dest: "{{ boost_workdir }}"
@@ -131,7 +131,7 @@
     - base_boost
     - boost
 
-- name: install zlib
+- name: Install zlib
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: |
@@ -153,11 +153,11 @@
   debug:
     msg: "{{ zlib_result.stdout_lines }}"
 
-- name: display bzib2_url
+- name: Display bzib2_url
   debug:
     msg: "bzip2_url: {{ bzip2_url }}"
 
-- name: download bzip2 source
+- name: Download bzip2 source
   get_url:
     url: "{{ bzip2_url }}"
     dest: "/tmp/"
@@ -170,7 +170,7 @@
   tags:
     - base_boost
 
-- name: unpack bzip2 source
+- name: Unpack bzip2 source
   unarchive:
     src: "{{ download_bzip2.dest }}"
     dest: "{{ boost_workdir }}"
@@ -180,7 +180,7 @@
   tags:
     - base_boost
 
-- name: make install bzip2
+- name: Make install bzip2
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} make CC={{ toolset }} CFLAGS='{{ boost_cflags }}' && make install"
@@ -196,7 +196,7 @@
   debug:
     msg: "{{ bzip2_result.stdout_lines }}"
 
-- name: get details for Boost libraries
+- name: Get details for Boost libraries
   uri:
     url: "{{ boost_url }}.json"
     return_content: true
@@ -208,7 +208,7 @@
     - base_boost
     - boost
 
-- name: set facts for download
+- name: Set facts for download
   set_fact:
     boost_json: "{{ boost.content }}"
   when: boost.status == 200
@@ -216,7 +216,7 @@
     - base_boost
     - boost
 
-- name: yum install Boost libraries
+- name: Yum install Boost libraries
   when: ansible_os_family == 'RedHat' and boost.status != 200
   yum:
     name: boost-devel
@@ -229,7 +229,7 @@
     - base_boost
     - boost
 
-- name: get sha256 for validation
+- name: Get sha256 for validation
   set_fact:
     sha256sum: "{{ boost_json.sha256 }}"
   when: boost.status == 200
@@ -237,7 +237,7 @@
     - base_boost
     - boost
 
-- name: set filename
+- name: Set filename
   set_fact:
     boost_file: "{{ boost_json.file }}"
   when: boost.status == 200
@@ -245,7 +245,7 @@
     - base_boost
     - boost
 
-- name: download Boost sources
+- name: Download Boost sources
   when: boost.status == 200
   get_url:
     url: "{{ boost_url }}"
@@ -260,7 +260,7 @@
     - base_boost
     - boost
 
-- name: unpack Boost sources
+- name: Unpack Boost sources
   when: boost.status == 200
   unarchive:
     src: "/tmp/{{ boost_file }}"
@@ -272,7 +272,7 @@
     - base_boost
     - boost
 
-- name: bootstrap Boost libraries
+- name: Bootstrap Boost libraries
   when: boost.status == 200
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
@@ -291,7 +291,7 @@
   debug:
     msg: "{{ boost_bootstrap.stdout_lines }}"
 
-- name: clean Boost libraries
+- name: Clean Boost libraries
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 --clean"
@@ -309,7 +309,7 @@
   debug:
     msg: "{{ boost_configuration.stdout_lines }}"
 
-- name: compile Boost libraries
+- name: Compile Boost libraries
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} \
@@ -331,7 +331,7 @@
     - boost
     - skip_ansible_lint
 
-- name: compile Boost libraries
+- name: Compile Boost libraries
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} \
@@ -353,7 +353,7 @@
     - boost
     - skip_ansible_lint
 
-- name: install Boost libraries
+- name: Install Boost libraries
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 -j{{ ansible_processor_vcpus }} \
@@ -374,9 +374,10 @@
     - boost
     - skip_ansible_lint
 
-- name: cleanup of build artefacts
+- name: Cleanup of build artefacts
   file:
     path: "{{ boost_workdir }}/{{ boost_dest }}"
     state: absent
   tags:
     - notest
+...

@@ -25,7 +25,7 @@
     - "{{ boost_workdir }}"
   when: compile_boost|bool
 
-- name: download zlib source
+- name: Download zlib source
   win_get_url:
     url: "{{ zlib_url }}"
     dest: "{{ boost_workdir }}"
@@ -36,7 +36,7 @@
   tags:
     - zlib
 
-- name: unzip zlib source
+- name: Unzip zlib source
   win_unzip:
     src: "{{ download_zlib.dest }}"
     dest: "{{ boost_prefix }}"
@@ -48,7 +48,7 @@
   tags:
     - zlib
 
-- name: download bzip2 source
+- name: Download bzip2 source
   win_get_url:
     url: "{{ bzip2_url }}"
     dest: "{{ boost_workdir }}"
@@ -60,7 +60,7 @@
   tags:
     - bzip2
 
-- name: gunzip bzip2 source
+- name: Gunzip bzip2 source
   win_shell: '7z x -y "{{ download_bzip2.dest }}" -o"{{ boost_workdir }}"'
   args:
     creates: "{{ boost_prefix }}/bzip2-{{ bzip2_version }}.tar"
@@ -68,11 +68,11 @@
   tags:
     - bzip2
 
-- name: untar bzip2 source
+- name: Untar bzip2 source
   # yamllint disable-line rule:line-length
   win_shell: '7z x -aoa -ttar -r -o"{{ boost_prefix }}" "{{ boost_workdir }}/bzip2-{{ bzip2_version }}.tar"'
 
-- name: cleanup temporary files
+- name: Cleanup temporary files
   win_file:
     path: "{{ boost_prefix }}/{{ item }}"
     state: absent
@@ -84,7 +84,7 @@
     - zlib
     - bzip2
 
-- name: get boost download url
+- name: Get boost download url
   when: compile_boost|bool
   win_uri:
     url: "{{ boost_url }}"
@@ -95,7 +95,7 @@
     - boost
     - download_boost
 
-- name: download boost source
+- name: Download boost source
   when: compile_boost|bool
   win_get_url:
     url: "{{ uri_output.location }}"
@@ -108,7 +108,7 @@
     - boost
     - download_boost
 
-- name: unpack boost source
+- name: Unpack boost source
   win_unzip:
     src: "{{ download_boost.dest }}"
     dest: "{{ boost_prefix }}"
@@ -121,7 +121,7 @@
     - boost
     - download_boost
 
-- name: verify install
+- name: Verify install
   win_stat:
     path: "{{ boost_install_dir }}/libs"
   when: not compile_boost|bool
@@ -129,7 +129,7 @@
   tags:
     - boost
 
-- name: create install directory
+- name: Create install directory
   win_file:
     path: "{{ boost_install_dir }}"
     state: directory
@@ -137,7 +137,7 @@
   tags:
     - boost
 
-- name: get boost binary
+- name: Get boost binary
   win_get_url:
     url: "{{ boost_bin }}"
     dest: "{{ boost_workdir }}/{{ boost_file_name_exe }}"
@@ -145,7 +145,7 @@
   tags:
     - boost
 
-- name: install boost
+- name: Install boost
   # yamllint disable-line rule:line-length
   win_shell: "cmd.exe /c {{ boost_file_name_exe }} /DIR='{{ boost_install_dir }}' /SILENT /NOCANCEL"
   args:
@@ -154,7 +154,7 @@
   tags:
     - boost
 
-- name: bootstrap boost
+- name: Bootstrap boost
   win_shell: "cmd.exe /c bootstrap"
   args:
     chdir: "{{ boost_dir }}"
@@ -164,7 +164,7 @@
     - bootstrap
     - boost
 
-- name: clean b2 for boost
+- name: Clean b2 for boost
   win_shell: "cmd.exe /c b2 --clean"
   args:
     chdir: "{{ boost_dir }}"
@@ -173,9 +173,9 @@
     - b2
     - boost
 
-- name: run b2 for boost compilation
+- name: Run b2 for boost compilation
   win_shell: "cmd.exe /c b2 {{ compile_boost_with }}
-      --build-type=minimal -j{{ ansible_processor_vcpus|default('2') }}
+      --build-type=minimal -j{{ ansible_processor_vcpus | default('2') }}
       toolset={{ my_toolset }}
       address-model={{ item.address_model }}
       architecture={{ item.architecture }}
@@ -199,7 +199,7 @@
     - b2
     - boost
 
-- name: add boost root to system environment
+- name: Add boost root to system environment
   win_environment:
     name: BOOST_ROOT
     value: "{{ boost_install_dir }}"
@@ -223,3 +223,4 @@
   win_file:
     path: "{{ boost_workdir }}"
     state: absent
+...
