@@ -60,27 +60,30 @@
   debug:
     msg: "collections_enabled: {{ collections_enabled }}"
 
-- name: When not sourcing devtoolset enable file
-  set_fact:
-    cmd_env: "/bin/true && "
+- name: set cmd_end
+  block:
+    - name: When not sourcing devtoolset enable file
+      set_fact:
+        cmd_env: "/bin/true && "
 
-- name: Source devtoolset enable file
-  when:
-    - collections_enabled|bool
-    - ansible_os_family == 'RedHat'
-    - ansible_distribution_major_version|int < 8
-    - toolset == 'gcc'
-  set_fact:
-    cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
+    - name: Source devtoolset enable file
+      when:
+        - collections_enabled|bool
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version|int < 8
+        - toolset == 'gcc'
+      set_fact:
+        cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
 
-- name: Source llvm toolset enable file
-  when:
-    - collections_enabled
-    - ansible_os_family == 'RedHat'
-    - ansible_distribution_major_version|int < 8
-    - toolset == 'clang'
-  set_fact:
-    cmd_env: "source /opt/rh/{{ llvm_toolset }}/enable && "
+    - name: Source llvm toolset enable file
+      when:
+        - collections_enabled
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version|int < 8
+        - toolset == 'clang'
+      set_fact:
+        cmd_env: "source /opt/rh/{{ llvm_toolset }}/enable && "
+  when: cmd_env is undefined
 
 - name: What is my gcc compiler?
   when: toolset == 'gcc'
