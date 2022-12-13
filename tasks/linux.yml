@@ -60,30 +60,35 @@
   debug:
     msg: "collections_enabled: {{ collections_enabled }}"
 
-- name: set cmd_end
-  block:
-    - name: When not sourcing devtoolset enable file
-      set_fact:
-        cmd_env: "/bin/true && "
+- name: When not sourcing devtoolset enable file
+  set_fact:
+    cmd_env: "/bin/true && "
 
-    - name: Source devtoolset enable file
-      when:
-        - collections_enabled|bool
-        - ansible_os_family == 'RedHat'
-        - ansible_distribution_major_version|int < 8
-        - toolset == 'gcc'
-      set_fact:
-        cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
+- name: Source gcc-toolkit enable file
+  when:
+    - collections_enabled|bool
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int >= 8
+  set_fact:
+    cmd_env: "source /opt/rh/gcc-toolset-{{ DTSVER }}/enable && "
 
-    - name: Source llvm toolset enable file
-      when:
-        - collections_enabled
-        - ansible_os_family == 'RedHat'
-        - ansible_distribution_major_version|int < 8
-        - toolset == 'clang'
-      set_fact:
-        cmd_env: "source /opt/rh/{{ llvm_toolset }}/enable && "
-  when: cmd_env is undefined
+- name: Source devtoolset enable file
+  when:
+    - collections_enabled|bool
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int < 8
+    - toolset == 'gcc'
+  set_fact:
+    cmd_env: "source /opt/rh/{{ cplusplus_devtoolset }}/enable && "
+
+- name: Source llvm toolset enable file
+  when:
+    - collections_enabled|bool
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int < 8
+    - toolset == 'clang'
+  set_fact:
+    cmd_env: "source /opt/rh/{{ llvm_toolset }}/enable && "
 
 - name: What is my gcc compiler?
   when: toolset == 'gcc'
@@ -98,7 +103,7 @@
 - name: Display details about gcc version
   when: toolset == 'gcc'
   debug:
-    msg: "{{ gcc_version.stdout_lines }}"
+    msg: "{{ gcc_version.stderr_lines }}"
 
 - name: What is my clang compiler?
   when: toolset == 'clang'
