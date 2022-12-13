@@ -6,7 +6,7 @@
     DTSVER: 7  # Actually llvm_toolkit version
     CLANG: 10
   roles:
-    - role: base_clang
+    - role: dockpack.base_clang
       vars:
         collections_enabled: true
         llvm_compilation: false

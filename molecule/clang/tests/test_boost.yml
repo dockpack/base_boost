@@ -9,9 +9,9 @@ file:
     exists: true
   /usr/local/lib/libboost_bzip2.a:
     exists: true
-  /usr/local/src/bzip2-1.0.6/bzip2.c:
+  /usr/local/src/bzip2-1.0.8/bzip2.c:
     exists: true
-  /usr/local/src/zlib-1.2.11/compress.c:
+  /usr/local/src/zlib-1.2.13/compress.c:
     exists: true
-  /usr/local/src/zlib-1.2.11/zlib.h:
+  /usr/local/src/zlib-1.2.13/zlib.h:
     exists: true

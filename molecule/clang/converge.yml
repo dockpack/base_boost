@@ -1,11 +1,17 @@
 ---
-- hosts: all
+- name: Converge
+  hosts: all
 
-  roles:
-    - role: base_boost
-      collections_enabled: true
-      compile_boost: true
-      toolset: clang
-      clean_boost: false  # for idempotency
-      compile_boost_with:
-        --with-iostreams
+  vars:
+    role_name: "{{ lookup('env','MOLECULE_PROJECT_DIRECTORY') | basename }}"
+    collections_enabled: true
+    compile_boost: true
+    toolset: clang
+    clean_boost: false  # for idempotency
+    compile_boost_with:
+      --with-iostreams
+
+  tasks:
+    - name: "Include {{ role_name }}"
+      ansible.builtin.include_role:
+        name: "{{ role_name }}"

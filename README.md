@@ -13,7 +13,7 @@ Role Variables
 - Corporate feature: toggles desired state
 `compilers_present: present`
 
-- Software collections offer latest versions of programming languages
+- Software collections offer latest versions of programming languages. Set to true also for using the gcc-toolkit on Centos8.
 `collections_enabled: true`
 
 - approved/test release of software collections' devtoolset

@@ -11,11 +11,8 @@ boost_url: "{{ boost_baseurl }}/{{ boost_version }}/source/{{ boost_dest }}.{{ b
 
 bzip2_url: "https://www.sourceware.org/pub/bzip2/bzip2-{{ bzip2_version }}.tar.gz"
 
-# Software collections offer latest versions of programming languages
-collections_enabled: false
-
 # major release of software collections' devtoolset
-DTSVER: 7
+DTSVER: 11
 #
 cplusplus_devtoolset: "devtoolset-{{ DTSVER }}"
 
