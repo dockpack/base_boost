@@ -24,4 +24,4 @@
         cplusplusrpms:
           - make
   roles:
-    - role: base_gcc
+    - role: dockpack.base_gcc

@@ -1,3 +1,5 @@
 ---
 - src: https://github.com/dockpack/base_gcc.git
-  name: base_gcc
+  name: dockpack.base_gcc
+- src: https://github.com/dockpack/base_clang.git
+  name: dockpack.base_clang

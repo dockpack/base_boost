@@ -1,7 +1,7 @@
 ---
 boost_version: 1.72.0
-zlib_version: 1.2.12
-bzip2_version: 1.0.6
+zlib_version: 1.2.13
+bzip2_version: 1.0.8
 
 # Corporate feature: toggles desired state
 compilers_present: present
