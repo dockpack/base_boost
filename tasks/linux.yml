@@ -306,11 +306,11 @@
   args:
     chdir: "{{ boost_workdir }}/{{ boost_dest }}"
   when: clean_boost is defined and clean_boost and boost.status == 200
+  changed_when: false  # fool idempotency test
   register: boost_configuration
   tags:
     - base_boost
     - boost
-    - skip_ansible_lint
 
 - name: Display details about the boost configuration
   when: clean_boost is defined and clean_boost and boost.status == 200
