@@ -299,7 +299,7 @@
   debug:
     msg: "{{ boost_bootstrap.stdout_lines }}"
 
-- name: Clean Boost libraries
+- name: Clean Boost libraries  # noqa command-instead-of-shell
   environment:
     PATH: '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin'
   shell: "{{ cmd_env | default('') }} ./b2 --clean"
